@@ -1,0 +1,60 @@
+﻿
+
+@model OnBoardingFirst.ViewModel.PSoldViewModel
+
+@{var dummy = Model.ProductSolds.FirstOrDefault();}
+
+
+@using (Html.BeginForm("Create", "ProductSold"))
+{
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+
+                    <h4 class="modal-title">Adding New Record</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+
+                        @Html.LabelFor(m => m.Customers[0].Name)
+                        @Html.DropDownListFor(m => m.Customers[0].ID, new SelectList(Model.Customers, "ID", "Name"), "Select Customer", new { @class = "form-control" })
+
+
+                    </div>
+                    <div class="form-group">
+
+                        @Html.LabelFor(m => m.Stores[0].Name)
+                        @Html.DropDownListFor(m => m.Stores[0].ID, new SelectList(Model.Stores, "ID", "Name"), "Select Store", new { @class = "form-control" })
+
+                    </div>
+                    <div class="form-group">
+
+                        @Html.LabelFor(m => m.Products[0].Name)
+                        @Html.DropDownListFor(m => m.Products[0].ID, new SelectList(Model.Products, "ID", "Name"), "Select Products", new { @class = "form-control" })
+
+                    </div>
+                    <div class="form-group">
+
+                        @Html.LabelFor(m => m.ProductSolds[0].DateSold)
+                        @Html.TextBoxFor(m => dummy.DateSold)
+
+
+                    </div>
+                </div>
+
+                
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"> Add </button>
+                    <button class="btn" data-dismiss="modal"> Close </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+}

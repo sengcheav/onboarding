@@ -1,0 +1,39 @@
+﻿@model OnBoardingFirst.Models.Customer
+@{
+    /**/
+
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+@using (Html.BeginForm("Update", "Customer"))
+{
+
+
+
+
+    <div class="form-group">
+
+        @Html.LabelFor(m => m.Name)
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+
+    </div>
+    <div class="form-group">
+
+        @Html.LabelFor(m => m.Address)
+        @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+
+    </div>
+    @Html.HiddenFor(m=>m.ID)
+
+    <div>
+        <button class ="btn"type="submit" >Submit</button>
+    </div>
+
+
+
+
+
+
+
+}

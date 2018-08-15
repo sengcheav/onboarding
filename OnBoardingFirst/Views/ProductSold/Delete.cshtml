@@ -1,0 +1,72 @@
+﻿@model OnBoardingFirst.Models.ProductSold
+@{
+    ViewBag.Title = "Delete";
+}
+
+
+
+<h2>Delete</h2>
+
+@using (Html.BeginForm("DeleteConfirm", "ProductSold"))
+{
+
+
+    <table >
+    <tr>
+        <th class="col-md-3">
+            @Html.DisplayNameFor(model => model.Customer.Name)
+        </th>
+        <th class="col-md-2">
+            @Html.DisplayNameFor(model => model.Store.Name)
+        </th>
+        <th class="col-md-3">
+            @Html.DisplayNameFor(model => model.Product.Name)
+        </th>
+        <th class="col-md-1">
+            @Html.DisplayNameFor(model => model.Product.Price)
+        </th>
+        <th></th>
+    </tr>
+    <tr>
+        <td class="col-md-3">
+            @Html.DisplayFor(model => model.Customer.Name)
+        </td>
+        <td class="col-md-2">
+            @Html.DisplayFor(model => model.Store.Name)
+        </td>
+        <td class="col-md-3">
+            @Html.DisplayFor(model => model.Product.Name)
+        </td>
+        <td class="col-md-1">
+            @Html.DisplayFor(model => model.Product.Price)
+        </td>
+
+
+
+    </tr>
+        
+
+    </table>
+
+    <div class="form-group">
+
+        <p> Are you sure to Delete this record ?</p>
+
+    </div>
+
+    @Html.HiddenFor(model =>model.ID)
+    <div>
+        <button class="btn btn-danger" type="submit">Yes</button>
+        
+        <button class ="btn btn-primary"onclick="location.href='@Url.Action("Index", "ProductSold")';return false;">Cancel</button>
+
+
+    </div>
+
+
+
+
+
+
+
+}

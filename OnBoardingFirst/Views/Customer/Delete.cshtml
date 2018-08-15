@@ -1,0 +1,55 @@
+﻿@model OnBoardingFirst.Models.Customer
+@{
+    ViewBag.Title = "Delete";
+}
+
+
+
+<h2>Delete</h2>
+
+@using (Html.BeginForm("DeleteConfirm", "Customer"))
+{
+
+
+    <table>
+        <tr>
+            <th class="col-md-3">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th class="col-md-2">
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            
+           
+        </tr>
+        <tr>
+            <td class="col-md-3">
+                @Html.DisplayFor(model => model.Name)
+            </td>
+            <td class="col-md-2">
+                @Html.DisplayFor(model => model.Address)
+            </td>
+           
+
+
+        </tr>
+
+
+    </table>
+
+    <div class="form-group">
+
+        <p> Are you sure to Delete this Customer ?</p>
+
+    </div>
+
+    @Html.HiddenFor(model => model.ID)
+    <div>
+        <button class="btn btn-danger" type="submit">Confirm</button>
+
+        <button class="btn btn-primary" onclick="location.href='@Url.Action("Index", "Customer")';return false;">Cancel</button>
+
+
+    </div>
+
+}

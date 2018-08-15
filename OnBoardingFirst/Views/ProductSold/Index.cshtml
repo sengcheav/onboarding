@@ -1,0 +1,60 @@
+﻿@model OnBoardingFirst.ViewModel.PSoldViewModel
+
+@{
+    ViewBag.Title = "Index";
+
+}
+
+
+<h2> Sale Record</h2>
+<!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Add New Record</button>
+@Html.Partial("Create", Model)
+
+
+
+<table>
+    <tr>
+        <th class="col-md-3">
+            @Html.DisplayNameFor(model => model.Customers[0].Name)
+        </th>
+        <th class="col-md-2">
+            @Html.DisplayNameFor(model => model.Stores[0].Name)
+        </th>
+        <th class="col-md-3">
+            @Html.DisplayNameFor(model => model.Products[0].Name)
+        </th>
+        <th class="col-md-1">
+            @Html.DisplayNameFor(model => model.Products[0].Price)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.ProductSolds)
+    {
+        <tr>
+            <td class="col-md-3">
+                @Html.DisplayFor(i => item.Customer.Name)
+            </td>
+            <td class="col-md-2">
+                @Html.DisplayFor(i => item.Store.Name)
+            </td>
+            <td class="col-md-3">
+                @Html.DisplayFor(i => item.Product.Name)
+            </td>
+            <td class="col-md-1">
+                @Html.DisplayFor(i => item.Product.Price)
+            </td>
+         
+
+            <td class="col-md-1">
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+
+

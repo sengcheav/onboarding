@@ -1,0 +1,294 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<style type="text/css">
+    .errorStyle {
+        
+        color: #F11414;
+        font-size: 13px;
+        padding: 5px 5px;
+        border-radius: 5px;
+        margin-top: 7px;
+    }
+</style>
+<h2>Sales Record</h2>
+<button id="modalButton" type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Add New Record</button>
+
+
+<table class="col-md-12">
+    <tr>
+        <th class="col-md-1">
+            Customer Name
+        </th>
+        <th class="col-md-1">
+            Product Name
+        </th>
+        <th class="col-md-1">
+            Store Name
+        </th>
+        <th class="col-md-1">
+            Price
+        </th>
+        <th class="col-md-1">
+            Date
+        </th>
+        <th class="col-md-2">
+
+        </th>
+
+    </tr>
+
+    <tbody class="tbody"></tbody>
+
+</table>
+
+
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Adding New Record</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <lable for="Customer">Customer Name </lable>
+                    <select id="customerSelect" class="customerSelect form-control" data-bind=" options: CustomerList, value :CustomerSelect ,optionsCaption:'Choose the Customer ' "></select>
+                </div>
+
+                <div class="form-group">
+                    <lable for="Product">Product Name</lable>
+                    <select id="productSelect" class="productSelect form-control" data-bind=" options: ProductList, value :ProductSelect ,optionsCaption:'Choose the Product ' "></select>
+                </div>
+
+                <div class="form-group">
+                    <lable class="Store"> Store</lable>
+                    <select id="storeSelect" class="storeSelect form-control" data-bind=" options: StoreList, value :StoreSelect ,optionsCaption:'Choose the Store ' "></select>
+                </div>
+                
+            </div>
+
+            <div class="alert alert-success" role="alert" style="display:none; margin-top: 10px;"> <span class="glyphicon  glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Form has submitted with successful </div>
+            <div class="alert alert-danger" role="alert" style="display:none; margin-top: 10px;">  <span class="glyphicon  glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Please check your submission </div>
+
+            <div class="modal-footer">
+                <button id="submitAddRecordModal" type="submit" class="btn btn-primary" data-bind="click:submit"> Add </button>
+                <button class="btn" data-dismiss="modal"> Close </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!--KnockOutJs librairies-->
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("~/scripts/knockout-3.4.2.js")
+    @Scripts.Render("~/scripts/knockout.validation.js")
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function () {
+
+            loadData();
+
+
+            ko.validation.init({
+
+                registerExtenders: true,
+                messagesOnModified: true,
+                insertMessages: true,
+                parseInputAttributes: true,
+                errorClass: 'errorStyle',
+                messageTemplate: null
+
+            }, true);
+
+
+        });
+
+
+
+
+        function loadData() {
+            $.ajax({
+                url: "/Sale/RecoredModelList",
+                type: "GET",
+
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    var html = '';
+                    $.each(result, function (key, item) {
+
+                        date = item.ProductSoldDate; 
+                        d = new Date(parseInt(date.replace('/Date(', '')));
+                        d = d.toDateString(); 
+                        html += '<tr>';
+                        html += '<td class="col-md-1">' + item.CustomerName + '</td>';
+                        html += '<td class="col-md-1">' + item.ProductName + '</td>';
+                        html += '<td class="col-md-1">' + item.StoreName + '</td>';
+                        html += '<td class="col-md-1">' + item.ProductPrice + '</td>';
+                        html += '<td class="col-md-1">' + d + '</td>';
+                        html += '<td><button class = "col-md-2 btn btn-danger" type = "button" onClick = "deleteByID(' + item.ProductSoldID + ')" >Delete</button></td> ';
+
+
+                        html += '</tr>';
+
+                    });
+                    $('.tbody').html(html);
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+
+        $("#modalButton").on('click', function (e) {
+
+            loadDropdownList();
+
+
+            var viewModel = {
+
+                //var self = this;
+
+
+
+                CustomerList: ko.observableArray([]),
+                CustomerSelect: ko.observable().extend({ required: true }),
+                ProductList: ko.observableArray([]),
+                ProductSelect: ko.observable().extend({ required: true }),
+                StoreList: ko.observableArray([]),
+                StoreSelect: ko.observable().extend({ required: true }),
+                submit: function () {
+
+                    if (viewModel.errors().length === 0) {
+                        //alert('Thank you');
+                        console.log("SUCCESS");
+
+                        addRecordToDB();
+                        $('.alert-success').show();
+                    } else {
+                        //alert('Please check your submission');
+                        console.log("not SUCCESS");
+                        viewModel.errors.showAllMessages(true);   
+
+                        $('.alert-danger').show();
+                    }
+
+                }
+
+
+            };
+            viewModel.errors = ko.validation.group(viewModel, { deep: true });
+            ko.applyBindings(viewModel);
+        });
+
+
+        function loadDropdownList() {
+            $.ajax({
+                url: "/Sale/DropdownList",
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+
+                    $.each(result.Customers, function (key, item) {
+                        console.log(item);
+
+                        $('.customerSelect').append($('<option>', { value: item.ID, text: item.Name }));
+                    });
+
+                    $.each(result.Stores, function (key, item) {
+                        console.log(item);
+                        $('.storeSelect').append($('<option>', { value: item.ID, text: item.Name }));
+                    });
+
+                    $.each(result.Products, function (key, item) {
+                        console.log(item);
+                        $('.productSelect').append($('<option>', { value: item.ID, text: item.Name }));
+                    });
+
+                }, error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            })
+
+
+        }
+
+        /*
+        $("#submitAddRecordModal").on('click', function (e) {
+            addRecordToDB();
+        });
+        */
+        function addRecordToDB() {
+
+            var obj = {
+                CustomerID: $("#customerSelect").val(),
+                StoreID: $("#storeSelect").val(),
+                ProductID: $("#productSelect").val()
+            }
+
+            $.ajax({
+                url: "/Sale/AddRecord",
+                data: JSON.stringify(obj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                //
+                success: function (result) {
+                    window.location.href = "/Sale/Index";
+                }, error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+
+        }
+
+        function deleteByID(id) {
+            console.log("delete " + id);
+            var ans = confirm("Are you sure you want to delete this Record?");
+            if (ans) {
+                $.ajax({
+                    url: "/Sale/delete/" + id,
+                    type: "POST",
+                    contentType: "applicate/json; charset=UTF-8",
+                    datatType: "json",
+                    success: function (result) {
+                        window.location.href = "Index";
+                    }, error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+
+
+                });
+            }
+
+        }
+
+
+
+
+    </script>
+
+}
+
+
+
