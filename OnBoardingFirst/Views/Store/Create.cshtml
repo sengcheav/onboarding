@@ -1,5 +1,18 @@
 ﻿
 @model OnBoardingFirst.Models.Store
+
+<style type="text/css">
+    .field-validation-error {
+        color: #F11414;
+    }
+
+    .input-validation-error {
+        border: 2px solid red;
+        border-color: red
+    }
+</style>
+
+
 @using (Html.BeginForm("Create", "Store"))
 {
     <div id="myModal" class="modal fade" role="dialog">
@@ -14,9 +27,10 @@
                 <div class="modal-body">
 
                     <div class="form-group">
-                       
+
                         @Html.LabelFor(m => m.Name)
                         @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Name)
 
                     </div>
                     <div class="form-group">
@@ -37,3 +51,4 @@
     </div>
 
 }
+

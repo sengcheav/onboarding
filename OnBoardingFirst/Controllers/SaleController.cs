@@ -91,25 +91,29 @@ namespace OnBoardingFirst.Controllers
             db.ProductSold.Add(newProductSold);
             db.SaveChanges();
 
-            return Json(new { success = true, responseText = "Record Successful Added!" }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true, responseText = "Record Successful Added!" });
 
         }
 
-
+        [HttpPost]
         public ActionResult delete(int id)
         {
 
+            if( id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             ProductSold psInDB = db.ProductSold.SingleOrDefault(ps => ps.ID == id);
             if(psInDB == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             }
             else
             {
                 db.ProductSold.Remove(psInDB);
                 db.SaveChanges(); 
-                return Json(new { success = true, responseText = "Record Successful Deleted!" }, JsonRequestBehavior.AllowGet);
+                return Json(new { success = true, responseText = "Record Successful Deleted!" });
             }
 
         }

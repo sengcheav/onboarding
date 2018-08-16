@@ -1,6 +1,18 @@
 ﻿
 
 @model OnBoardingFirst.Models.Product
+<style type="text/css">
+    .field-validation-error {
+        color: #F11414;
+    }
+
+    .input-validation-error {
+        border: 2px solid red;
+        border-color: red
+    }
+</style>
+
+
 @using (Html.BeginForm("Create", "Product"))
 {
     <div id="myModal" class="modal fade" role="dialog">
@@ -15,15 +27,17 @@
                 <div class="modal-body">
 
                     <div class="form-group">
-                        
+
                         @Html.LabelFor(m => m.Name)
                         @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m=>m.Name)
 
                     </div>
                     <div class="form-group">
-                        
+
                         @Html.LabelFor(m => m.Price)
                         @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m=>m.Price)
 
                     </div>
                 </div>
@@ -36,5 +50,15 @@
 
         </div>
     </div>
+
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+
 
 }

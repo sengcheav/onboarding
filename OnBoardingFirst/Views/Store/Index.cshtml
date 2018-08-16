@@ -38,7 +38,7 @@
             <td class="col-md-1">
                 @Html.ActionLink("Edit", "Edit", new { id = item.ID })
             </td>
-            
+
             <td class="col-md-1">
                 @Html.ActionLink("Delete", "Delete", new { id = item.ID })
             </td>
@@ -52,3 +52,12 @@
 
 </table>
 
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+
+
+}

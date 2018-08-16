@@ -1,0 +1,314 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<style type="text/css">
+    .errorStyle {
+        color: #F11414;
+        font-size: 13px;
+        padding: 5px 5px;
+        border-radius: 5px;
+        margin-top: 7px;
+    }
+</style>
+<h2>Products</h2>
+<button id="addmodalButton" type="button" class="btn btn-info" data-toggle="modal" data-target="#myAddModal">Add New Product</button>
+
+<table class="col-md-12">
+    <tr>
+        <th class="col-md-1">
+            Product Name
+        </th>
+
+        <th class="col-md-1">
+            Price
+        </th>
+    </tr>
+    <tbody class="tbody"></tbody>
+
+</table>
+
+
+<div id="myAddModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Adding New Product</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <lable for="Name">Name</lable>
+                    <input id="Name" class="form-control" type="text" data-bind="value:Name" />
+                </div>
+
+                <div class="form-group">
+                    <lable for="Price">Price </lable>
+                    <input id="Price" class="form-control" type="number" data-bind="value:Price" />
+                </div>
+            </div>
+
+            <div class="alert alert-success" role="alert" style="display:none; margin-top: 10px;"> <span class="glyphicon  glyphicon glyphicon-ok-circle" aria-hidden="true"></span> Form has submitted with successful </div>
+            <div class="alert alert-danger" role="alert" style="display:none; margin-top: 10px;">  <span class="glyphicon  glyphicon glyphicon-remove-circle" aria-hidden="true"></span> Please check your submission </div>
+
+            <div class="modal-footer">
+                <button id="submitAddProductModal" type="submit" class="btn btn-primary" data-bind="click:submit"> Add </button>
+                <button class="btn" data-dismiss="modal"> Close </button>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<div class="modal fade" id="myEditModal" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Update Product</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-group">
+                    <lable for="Name">Name</lable>
+                    <input id="editName" class="form-control" type="text" data-bind="value:editName" />
+                </div>
+
+                <div class="form-group">
+                    <lable for="Price">Price </lable>
+                    <input id="editPrice" class="form-control" type="number" data-bind="value:editPrice" />
+                </div>
+
+                <div>
+                    <input type="hidden" id="editID" aria-hidden="true" />
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button id="submitUpdateProductModal" type="submit" class="btn btn-primary" data-bind="click:submit"> Update </button>
+                <button class="btn" data-dismiss="modal"> Close </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+
+    
+    @Scripts.Render("~/scripts/knockout-3.4.2.js")
+    @Scripts.Render("~/scripts/knockout.validation.js")
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            loadData();
+            ko.validation.init({
+                registerExtenders: true,
+                messagesOnModified: true,
+                insertMessages: true,
+                parseInputAttributes: true,
+                errorClass: 'errorStyle',
+                messageTemplate: null
+
+            }, true);
+        });
+
+        function loadData() {
+            $.ajax({
+                url: "/Products/GetProductsList",
+                type: "GET",
+
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    var html = '';
+                    $.each(result, function (key, item) {
+
+                        html += '<tr>';
+                        html += '<td class="col-md-1" >' + item.Name + '</td>';
+                        html += '<td  class="col-md-1" >' + item.Price + '</td>';
+                        html += '<td><button id ="editButton" class = "col-md-2 btn " type = "button" onClick = "getByID(' + item.ID + ')"  >Edit</button></td> ';
+                        html += '<td><button class = "col-md-2 btn btn-danger" type = "button" onClick = "deleteByID(' + item.ID + ')" >Delete</button></td> ';
+                        html += '</tr>';
+
+                    });
+                    $('.tbody').html(html);
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        $("#addmodalButton").on('click', function (e) {
+
+            var viewModel = {
+
+                Name: ko.observable().extend({ required: true }),
+                Price: ko.observable().extend({ required: true }).extend({ min: 0.01 }),
+                submit: function () {
+
+                    if (viewModel.errors().length === 0) {
+                        //alert('Thank you');
+                        console.log("SUCCESS");
+
+                        addProductToDB()
+                        $('.alert-success').show();
+                    } else {
+                        //alert('Please check your submission');
+                        console.log("not SUCCESS");
+                        viewModel.errors.showAllMessages(true);
+
+                        $('.alert-danger').show();
+                    }
+
+                }
+
+            };
+            viewModel.errors = ko.validation.group(viewModel, { deep: true });
+            ko.applyBindings(viewModel);
+        });
+
+        function addProductToDB() {
+
+            var obj = {
+                Name: $("#Name").val(),
+                Price: $("#Price").val(),
+            }
+
+            $.ajax({
+                url: "/Products/AddProduct",
+                data: JSON.stringify(obj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                //
+                success: function (result) {
+                    window.location.href = "/Products/Index";
+                }, error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+
+        }
+
+        function deleteByID(id) {
+            console.log("delete " + id);
+            var ans = confirm("Are you sure you want to delete this Product?");
+            if (ans) {
+                $.ajax({
+                    url: "/Products/DeleteByID/" + id,
+                    type: "POST",
+                    contentType: "applicate/json; charset=UTF-8",
+                    datatType: "json",
+                    success: function (result) {
+                        window.location.href = "/Products/Index";
+                    }, error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+
+
+                });
+            }
+
+        }
+
+        function getByID(id) {
+
+            var viewModel2 = {
+
+                editName: ko.observable().extend({ required: true }),
+                editPrice: ko.observable().extend({ required: true }).extend({ min: 0.01 }),
+                submit: function () {
+                    console.log("submit vie2");
+                    if (viewModel2.errors().length === 0) {
+                        //alert('Thank you');
+                        console.log("SUCCESS");
+
+                        UpdateByID();
+                        $('.alert-success').show();
+                    } else {
+                        //alert('Please check your submission');
+                        console.log("not SUCCESS");
+                        viewModel2.errors.showAllMessages(true);
+
+                        $('.alert-danger').show();
+                    }
+
+                }
+
+            };
+            viewModel2.errors = ko.validation.group(viewModel2, { deep: true });
+            ko.applyBindings(viewModel2);
+
+
+
+            $.ajax({
+                url: "/Products/GetbyID/" + id,
+                typr: "GET",
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log("result " + result.Name + " " + result.ID)
+                    $("#editName").val(result.Name),
+                        $("#editName").trigger('change'),
+                        $("#editPrice").val(result.Price),
+                        $("#editPrice").trigger('change'),
+                        $("#editID").val(result.ID),
+                        $("#myEditModal").modal('show');
+
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+
+
+            
+
+        }
+
+        function UpdateByID() {
+            var obj = {
+                Name: $("#editName").val(),
+                Price: $("#editPrice").val(),
+                ID: $("#editID").val()
+            }
+            $.ajax({
+                url: "/Products/UpdateByID",
+                data: JSON.stringify(obj),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                //
+                success: function (result) {
+                    window.location.href = "/Products/Index";
+                }, error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+
+            });
+
+        }
+
+     
+
+
+    </script>
+
+
+
+
+
+
+}

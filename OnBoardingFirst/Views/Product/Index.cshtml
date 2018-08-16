@@ -7,6 +7,7 @@
 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Add New Product</button>
 
 
+
 @Html.Partial("Create", new OnBoardingFirst.Models.Product())
 
 <h2>Products</h2>
@@ -39,7 +40,7 @@
             <td class="col-md-1">
                 @Html.ActionLink("Edit", "Edit", new { id = item.ID })
             </td>
-            
+
             <td class="col-md-1">
                 @Html.ActionLink("Delete", "Delete", new { id = item.ID })
             </td>
@@ -53,4 +54,12 @@
 
 </table>
 
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+
+
+}
 

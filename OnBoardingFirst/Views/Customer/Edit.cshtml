@@ -5,6 +5,20 @@
     ViewBag.Title = "Edit";
 }
 
+
+<style type="text/css">
+    .field-validation-error {
+        color: #F11414;
+       
+    }
+
+    .input-validation-error {
+        border: 2px solid red;
+        border-color: red
+    }
+</style>
+
+
 <h2>Edit</h2>
 @using (Html.BeginForm("Update", "Customer"))
 {
@@ -16,7 +30,7 @@
 
         @Html.LabelFor(m => m.Name)
         @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
-
+        @Html.ValidationMessageFor(m =>m.Name)
     </div>
     <div class="form-group">
 
@@ -24,14 +38,18 @@
         @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
 
     </div>
-    @Html.HiddenFor(m=>m.ID)
+    @Html.HiddenFor(m => m.ID)
 
     <div>
-        <button class ="btn"type="submit" >Submit</button>
+        <button class="btn" type="submit">Submit</button>
     </div>
 
+}
 
 
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
 
 
 
